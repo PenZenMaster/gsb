@@ -1,14 +1,13 @@
 // File: ads-api/src/fetch_campaigns.js
 // Author: Skippy the Magnificent & George Penzenik
-// Version: 1.01
-// Date Modified: 17:12 04/04/2025
-// Comment: Fixed incorrect require for google-auth-library, updated OAuth2 instantiation
+// Version: 1.04
+// Date Modified: 18:58 04/04/2025
+// Comment: Replaced require with dynamic import to fix node-fetch ESM compatibility in Node.js v20+
 
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const { OAuth2Client } = require('google-auth-library');
-const { GoogleAdsClient } = require('google-ads-api');
 
 // Load configuration and credentials
 const CONFIG_PATH = path.join(__dirname, '../config/ads-config.json');
@@ -25,7 +24,6 @@ async function loadCredentials() {
         redirect_uris[0]
     );
 
-    // Try loading saved token
     if (fs.existsSync(TOKEN_PATH)) {
         const token = JSON.parse(fs.readFileSync(TOKEN_PATH));
         auth.setCredentials(token);
@@ -41,9 +39,7 @@ async function loadCredentials() {
             output: process.stdout,
         });
 
-        const code = await new Promise(resolve => {
-            rl.question('Enter the code from that page here: ', resolve);
-        });
+        const code = await new Promise(resolve => rl.question('Enter the code from that page here: ', resolve));
         rl.close();
 
         const { tokens } = await auth.getToken(code);
@@ -59,25 +55,31 @@ async function fetchCampaigns() {
     const auth = await loadCredentials();
     const config = JSON.parse(fs.readFileSync(CONFIG_PATH));
 
-    const client = new GoogleAdsClient({
-        developer_token: config.developer_token,
-        login_customer_id: config.manager_id,
-        auth,
+    const accessToken = auth.credentials.access_token;
+    const customerId = config.test_account_id;
+    const query = `SELECT campaign.id, campaign.name, campaign.status FROM campaign LIMIT 10`;
+
+    const fetch = (await import('node-fetch')).default;
+
+    const response = await fetch(`https://googleads.googleapis.com/v15/customers/${customerId}/googleAds:search`, {
+
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'developer-token': config.developer_token,
+            'login-customer-id': config.manager_id,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query })
     });
 
-    const customer = client.Customer({
-        customer_id: config.test_account_id,
-        refresh_token: auth.credentials.refresh_token,
-    });
-
-    try {
-        const campaigns = await customer.query(
-            `SELECT campaign.id, campaign.name, campaign.status FROM campaign LIMIT 10`
-        );
-        console.log('Campaigns:', campaigns);
-    } catch (err) {
-        console.error('Error fetching campaigns:', err);
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`API request failed: ${response.status} - ${error}`);
     }
+
+    const data = await response.json();
+    console.log('Campaigns:', JSON.stringify(data, null, 2));
 }
 
 fetchCampaigns();

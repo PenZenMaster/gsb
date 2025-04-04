@@ -5,6 +5,7 @@
     "google-ads-api": "^19.0.2-rest-beta",
     "google-auth-library": "^9.15.1",
     "googleapis": "^148.0.0",
+    "node-fetch": "^3.3.2",
     "openai": "^4.91.1",
     "xml2js": "^0.6.2"
   }
