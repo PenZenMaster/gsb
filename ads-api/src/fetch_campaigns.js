@@ -1,8 +1,8 @@
 // File: ads-api/src/fetch_campaigns.js
 // Author: Skippy the Magnificent & George Penzenik
-// Version: 1.04
-// Date Modified: 18:58 04/04/2025
-// Comment: Replaced require with dynamic import to fix node-fetch ESM compatibility in Node.js v20+
+// Version: 1.05
+// Date Modified: 19:14 04/04/2025
+// Comment: Patched for Google Ads API sandbox mode with test customer ID 1234567890
 
 const fs = require('fs');
 const path = require('path');
@@ -13,6 +13,12 @@ const { OAuth2Client } = require('google-auth-library');
 const CONFIG_PATH = path.join(__dirname, '../config/ads-config.json');
 const CREDENTIALS_PATH = path.join(__dirname, '../auth/google-auth.json');
 const TOKEN_PATH = path.join(__dirname, '../token/ads-token.json');
+
+// Google Ads API version
+const API_VERSION = 'v15';
+
+// Use Google Ads Sandbox test account ID
+const SANDBOX_CUSTOMER_ID = '1234567890';
 
 async function loadCredentials() {
     const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH));
@@ -56,18 +62,16 @@ async function fetchCampaigns() {
     const config = JSON.parse(fs.readFileSync(CONFIG_PATH));
 
     const accessToken = auth.credentials.access_token;
-    const customerId = config.test_account_id;
+    const customerId = SANDBOX_CUSTOMER_ID; // Only valid in TEST mode
     const query = `SELECT campaign.id, campaign.name, campaign.status FROM campaign LIMIT 10`;
 
     const fetch = (await import('node-fetch')).default;
 
-    const response = await fetch(`https://googleads.googleapis.com/v15/customers/${customerId}/googleAds:search`, {
-
+    const response = await fetch(`https://googleads.googleapis.com/${API_VERSION}/customers/${customerId}/googleAds:search`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${accessToken}`,
             'developer-token': config.developer_token,
-            'login-customer-id': config.manager_id,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ query })
@@ -79,7 +83,7 @@ async function fetchCampaigns() {
     }
 
     const data = await response.json();
-    console.log('Campaigns:', JSON.stringify(data, null, 2));
+    console.log('📊 Sandbox Campaigns:', JSON.stringify(data, null, 2));
 }
 
 fetchCampaigns();
