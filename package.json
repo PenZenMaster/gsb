@@ -8,6 +8,7 @@
     "googleapis": "^148.0.0",
     "node-fetch": "^3.3.2",
     "openai": "^4.91.1",
+    "playwright": "^1.51.1",
     "xml2js": "^0.6.2"
   }
 }
