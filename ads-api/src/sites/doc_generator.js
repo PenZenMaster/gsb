@@ -10,17 +10,24 @@ const { google } = require('googleapis');
 const { authorize } = require('./auth');
 const OpenAI = require('openai');
 
-require('dotenv').config({ path: path.join(__dirname, '../../../.env') });
+// Load environment variables from the .env file located 3 levels up from here
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
 
+// Fail loudly if OpenAI key is missing
 if (!process.env.OPENAI_API_KEY) {
     console.error('🚨 Missing OPENAI_API_KEY! Check your .env file and restart the app.');
     process.exit(1);
 }
 
-const CONFIG_PATH = path.join(__dirname, '../../config/client-config.json');
-const SITEMAP_JSON = path.join(__dirname, '../../assets/parsed-sitemap.json');
+// Define paths to config and sitemap files
+const CONFIG_PATH = path.resolve(__dirname, '../../config/client-config.json');
+const SITEMAP_JSON = path.resolve(__dirname, '../../assets/parsed-sitemap.json');
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize OpenAI client
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+
 
 async function getOrCreateClientFolder(auth, clientName) {
     const drive = google.drive({ version: 'v3', auth });
