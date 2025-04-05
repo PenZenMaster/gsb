@@ -1,22 +1,26 @@
 // File: ads-api/src/sites/doc_generator.js
 // Author: Skippy the Magnificent & George Penzenik
-// Version: 0.32 (Reuse Docs by Title in Folder)
-// Date Modified: 00:30 04/05/2025
-// Comment: Checks for existing docs by title and reuses if found
+// Version: 0.34 (Fix .env Loading with Explicit Path)
+// Date Modified: 00:52 04/05/2025
+// Comment: Loads .env explicitly from project root to avoid missing OPENAI_API_KEY
 
 const fs = require('fs');
 const path = require('path');
 const { google } = require('googleapis');
 const { authorize } = require('./auth');
-const { Configuration, OpenAIApi } = require('openai');
-require('dotenv').config();
+const OpenAI = require('openai');
+
+require('dotenv').config({ path: path.join(__dirname, '../../../.env') });
+
+if (!process.env.OPENAI_API_KEY) {
+    console.error('🚨 Missing OPENAI_API_KEY! Check your .env file and restart the app.');
+    process.exit(1);
+}
 
 const CONFIG_PATH = path.join(__dirname, '../../config/client-config.json');
 const SITEMAP_JSON = path.join(__dirname, '../../assets/parsed-sitemap.json');
 
-const openai = new OpenAIApi(new Configuration({
-    apiKey: process.env.OPENAI_API_KEY
-}));
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 async function getOrCreateClientFolder(auth, clientName) {
     const drive = google.drive({ version: 'v3', auth });
@@ -51,7 +55,7 @@ async function generatePageContent(title, url) {
     try {
         console.log(`🤖 GPT generating content for: ${title}`);
 
-        const response = await openai.createChatCompletion({
+        const response = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 { role: 'system', content: 'You are a skilled marketing copywriter.' },
@@ -61,7 +65,7 @@ async function generatePageContent(title, url) {
             max_tokens: 300
         });
 
-        const content = response.data.choices[0].message.content;
+        const content = response.choices[0].message.content;
         console.log(`🧠 GPT says: ${content.substring(0, 100)}...`);
         return content;
     } catch (err) {
@@ -74,7 +78,6 @@ async function createGoogleDoc(auth, page, folderId) {
     const docs = google.docs({ version: 'v1', auth });
     const drive = google.drive({ version: 'v3', auth });
 
-    // Check for existing doc in target folder
     const search = await drive.files.list({
         q: `name='${page.title}' and '${folderId}' in parents and mimeType='application/vnd.google-apps.document' and trashed=false`,
         fields: 'files(id, name)'
