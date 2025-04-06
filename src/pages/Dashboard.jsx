@@ -73,7 +73,9 @@ export default function Dashboard() {
       setLog((log) => log + `❌ Reauth failed: ${err.message}\n`);
     }
   };
-
+  const launchOAuth = () => {
+    window.open("http://localhost:3001/auth/start", "_blank", "popup,width=500,height=600");
+  };
   return (
     <div className="p-4 grid grid-cols-4 gap-4 min-h-screen">
       <div className="col-span-1 space-y-4">
@@ -97,6 +99,7 @@ export default function Dashboard() {
       <div className="col-span-3 space-y-4">
         <h1 className="text-2xl font-bold">RankRocket Control Panel</h1>
         <div className="flex gap-2">
+          <Button onClick={launchOAuth}>➕ Add Account</Button>
           <Button disabled={!selectedAccount} onClick={runGPT}>🧠 Run GPT</Button>
           <Button disabled={!selectedAccount} onClick={buildSite}>🌍 Build Site</Button>
           <Button disabled={!selectedAccount} onClick={reauth}>🔄 Reauth</Button>
