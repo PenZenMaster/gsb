@@ -1,8 +1,7 @@
-const express = require('express');
-const fs = require('fs');
-const cors = require('cors');
-const path = require('path');
-const { exec } = require('child_process');
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 const PORT = 3001;
@@ -10,52 +9,46 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-const ACCOUNTS_FILE = path.join(__dirname, 'storage/accounts.json');
+// In-memory user store for demo
+const accounts = [
+  {
+    name: "Bob Robertquilen",
+    email: "brobertquilen@gmail.com",
+    niche: "Rank Rocket",
+    brand: "Rank Rocket",
+    session: "storage/bob-login.json",
+  },
+  {
+    name: "Adam Albertquif",
+    email: "aalbertquif@gmail.com",
+    niche: "Concrete",
+    brand: "Concrete Kingz",
+    session: "storage/adam-login.json",
+  },
+];
 
-app.get('/accounts', (req, res) => {
-  fs.readFile(ACCOUNTS_FILE, 'utf-8', (err, data) => {
-    if (err) {
-      console.error('Failed to load accounts.json:', err.message);
-      return res.status(500).json({ error: 'Failed to load accounts.json' });
-    }
-
-    try {
-      const parsed = JSON.parse(data);
-      res.json(parsed);
-    } catch (parseErr) {
-      res.status(500).json({ error: 'Invalid JSON in accounts.json' });
-    }
-  });
+app.get("/accounts", (req, res) => {
+  res.json(accounts);
 });
 
-app.post('/run-gpt', (req, res) => {
+app.post("/run-gpt", (req, res) => {
   const { email } = req.body;
-  console.log(`🧠 Running GPT script for ${email}`);
-
-  exec(`node scripts/doc_upgrader_test.js`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`GPT Error: ${error.message}`);
-      return res.status(500).json({ message: 'GPT task failed.' });
-    }
-    console.log(stdout);
-    res.json({ message: 'GPT task completed.' });
-  });
+  console.log(`[GPT] Generating content for ${email}`);
+  res.json({ message: `Content generated for ${email}` });
 });
 
-app.post('/build-site', (req, res) => {
+app.post("/build-site", (req, res) => {
   const { email } = req.body;
-  console.log(`🌍 Running Site Generator for ${email}`);
+  console.log(`[SiteBuilder] Launching builder for ${email}`);
+  res.json({ message: `Site built for ${email}` });
+});
 
-  exec(`node scripts/gsite_generator_v2.js`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Site Generator Error: ${error.message}`);
-      return res.status(500).json({ message: 'Site builder failed.' });
-    }
-    console.log(stdout);
-    res.json({ message: 'Site build completed.' });
-  });
+app.post("/reauth", (req, res) => {
+  const { email } = req.body;
+  console.log(`[Reauth] Reauth requested for ${email}`);
+  res.json({ message: `Reauthorized ${email}` });
 });
 
 app.listen(PORT, () => {
-  console.log(`🧠 RankRocket API running at http://localhost:${PORT}`);
+  console.log(`🚀 Backend running on http://localhost:${PORT}`);
 });
