@@ -52,6 +52,21 @@ export default function Dashboard() {
       setLog((log) => log + `❌ Site builder failed: ${err.message}\n`);
     }
   };
+  const reauth = async () => {
+    console.log("🔥 Reauth clicked for", selectedAccount?.email);
+    setLog((log) => log + `🔄 Starting reauth for ${selectedAccount?.email}...\n`);
+    try {
+      const res = await fetch("http://localhost:3001/reauth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: selectedAccount.email })
+      });
+      const result = await res.json();
+      setLog((log) => log + `✅ Reauth complete: ${result.message}\n`);
+    } catch (err) {
+      setLog((log) => log + `❌ Reauth failed: ${err.message}\n`);
+    }
+  };
 
   return (
     <div className="p-4 grid grid-cols-4 gap-4 min-h-screen">
@@ -83,7 +98,9 @@ export default function Dashboard() {
         <div className="flex gap-2">
           <Button disabled={!selectedAccount} onClick={runGPT}>🧠 Run GPT</Button>
           <Button disabled={!selectedAccount} onClick={buildSite}>🌍 Build Site</Button>
-          <Button disabled={!selectedAccount}>🔄 Reauth</Button>
+          <Button disabled={!selectedAccount} onClick={reauth}>🔄 Reauth</Button>
+
+
         </div>
 
         <div>
