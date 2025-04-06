@@ -61,8 +61,9 @@ export default function Dashboard() {
   };
 
   const launchOAuth = () => {
-    window.open("http://localhost:3001/auth/start", "_blank", "popup,width=500,height=600");
+    window.open("http://localhost:3001/auth/start?force=true", "_blank", "popup,width=500,height=600");
   };
+
 
   return (
     <div className="grid grid-cols-4 gap-6 p-6">

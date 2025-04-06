@@ -65,9 +65,10 @@ app.post("/build-site", (req, res) => {
 
 // 🔑 Launch OAuth
 app.get("/auth/start", (req, res) => {
+  const forceSelect = req.query.force === "true";
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
-    prompt: "select_account",
+    prompt: forceSelect ? "consent select_account" : "consent",
     scope: [
       "https://www.googleapis.com/auth/userinfo.profile",
       "https://www.googleapis.com/auth/userinfo.email",
@@ -75,6 +76,7 @@ app.get("/auth/start", (req, res) => {
   });
   res.redirect(authUrl);
 });
+
 
 // 🔁 OAuth Callback Handler
 app.get("/auth/callback", async (req, res) => {
