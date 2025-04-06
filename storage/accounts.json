@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Bob Robertquilen",
+    "email": "brobertquilen@gmail.com",
+    "niche": "Rank Rocket",
+    "brand": "Rank Rocket",
+    "session": "storage/bob-login.json"
+  },
+  {
+    "name": "Adam Albertquif",
+    "email": "aalbertquif@gmail.com",
+    "niche": "Concrete",
+    "brand": "Concrete Kingz",
+    "session": "storage/adam-login.json"
+  }
+]
