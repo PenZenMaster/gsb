@@ -1,0 +1,29 @@
+# Node modules (front + back)
+node_modules/
+ads-api/node_modules/
+
+# Build and dist
+dist/
+build/
+
+# Local config
+.env
+.env.local
+.env.txt
+
+# Vite cache
+.vite/
+
+# Logs and temp
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+temp/
+
+# VSCode junk (optional)
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
