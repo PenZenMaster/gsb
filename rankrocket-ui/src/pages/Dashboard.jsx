@@ -58,13 +58,22 @@ export default function Dashboard() {
       <div className="col-span-1 space-y-4">
         <h2 className="text-xl font-bold">Google Accounts</h2>
         {accounts.map((acc) => (
-          <Card key={acc.email} onClick={() => selectAccount(acc)} className="hover:bg-muted cursor-pointer">
-            <CardContent className="p-2">
+          <Card key={acc.email} className="hover:bg-muted border border-red-500" style={{ zIndex: 1000, position: "relative" }}>
+            <div
+              className="cursor-pointer p-2"
+              onClick={() => {
+                alert("CLICKED: " + acc.name);
+                console.log("CLICKED:", acc);
+                setSelectedAccount(acc);
+                setLog((log) => log + `Selected account: ${acc.name} (${acc.email})\\n`);
+              }}
+            >
               <p className="font-semibold">{acc.name}</p>
               <p className="text-sm text-muted-foreground">{acc.email}</p>
               <p className="text-xs italic">{acc.niche}</p>
-            </CardContent>
+            </div>
           </Card>
+
         ))}
       </div>
 

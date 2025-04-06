@@ -17,6 +17,8 @@ export default function Dashboard() {
   }, []);
 
   const selectAccount = (account) => {
+    alert("CLICKED: " + account.name);
+    console.log("CLICKED:", account);
     setSelectedAccount(account);
     setLog((log) => log + `Selected account: ${account.name} (${account.email})\n`);
   };
@@ -53,12 +55,11 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 grid grid-cols-4 gap-4 min-h-screen">
-
       {/* Sidebar: Account List */}
       <div className="col-span-1 space-y-4">
         <h2 className="text-xl font-bold">Google Accounts</h2>
         {accounts.map((acc) => (
-          <Card key={acc.email} onClick={() => selectAccount(acc)} className="hover:bg-muted cursor-pointer">
+          <Card key={acc.email} onClick={() => selectAccount(acc)} className="hover:bg-muted cursor-pointer border border-red-500" style={{ zIndex: 1000, position: "relative" }}>
             <CardContent className="p-2">
               <p className="font-semibold">{acc.name}</p>
               <p className="text-sm text-muted-foreground">{acc.email}</p>
