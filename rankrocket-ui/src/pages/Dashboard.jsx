@@ -64,9 +64,11 @@ export default function Dashboard() {
       const result = await res.json();
       setLog((log) => log + `✅ Reauth complete: ${result.message}\n`);
     } catch (err) {
+      console.error("🔥 Reauth error:", err);
       setLog((log) => log + `❌ Reauth failed: ${err.message}\n`);
     }
   };
+
 
   return (
     <div className="p-4 grid grid-cols-4 gap-4 min-h-screen">
