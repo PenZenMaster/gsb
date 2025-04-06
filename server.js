@@ -41,9 +41,30 @@ const accounts = [
   },
 ];
 
+const storageDir = path.join(__dirname, "storage");
+
 app.get("/accounts", (req, res) => {
-  res.json(accounts);
+  try {
+    const files = fs.readdirSync(storageDir).filter(file => file.endsWith("-login.json"));
+    const accounts = files.map(file => {
+      const fullPath = path.join(storageDir, file);
+      const data = JSON.parse(fs.readFileSync(fullPath, "utf-8"));
+
+      return {
+        name: data.name || "Unknown",
+        email: data.email,
+        niche: data.niche || "Unknown Niche",
+        brand: data.brand || "Unknown Brand",
+        session: `storage/${file}`,
+      };
+    });
+    res.json(accounts);
+  } catch (err) {
+    console.error("❌ Failed to load accounts:", err);
+    res.status(500).send("Error loading accounts");
+  }
 });
+
 
 app.post("/run-gpt", (req, res) => {
   const { email } = req.body;
