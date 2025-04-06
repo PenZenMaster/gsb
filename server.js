@@ -10,37 +10,14 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
+// 🔐 OAuth Setup
 const CLIENT_ID = "37156535763-79hajfra02dtocpef812lhg3fgakgfqi.apps.googleusercontent.com";
 const CLIENT_SECRET = "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";
 const REDIRECT_URI = "http://localhost:3001/auth/callback";
 
-const authUrl = oauth2Client.generateAuthUrl({
-  access_type: "offline",
-  prompt: "select_account",
-  scope: [
-    "https://www.googleapis.com/auth/userinfo.profile",
-    "https://www.googleapis.com/auth/userinfo.email",
-  ],
-});
+const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-// In-memory user store for demo
-const accounts = [
-  {
-    name: "Bob Robertquilen",
-    email: "brobertquilen@gmail.com",
-    niche: "Rank Rocket",
-    brand: "Rank Rocket",
-    session: "storage/bob-login.json",
-  },
-  {
-    name: "Adam Albertquif",
-    email: "aalbertquif@gmail.com",
-    niche: "Concrete",
-    brand: "Concrete Kingz",
-    session: "storage/adam-login.json",
-  },
-];
-
+// 📦 Dynamic Account Loader
 const storageDir = path.join(__dirname, "storage");
 
 app.get("/accounts", (req, res) => {
@@ -65,29 +42,32 @@ app.get("/accounts", (req, res) => {
   }
 });
 
-
-app.post("/run-gpt", (req, res) => {
-  const { email } = req.body;
-  console.log(`[GPT] Generating content for ${email}`);
-  res.json({ message: `Content generated for ${email}` });
-});
-
-app.post("/build-site", (req, res) => {
-  const { email } = req.body;
-  console.log(`[SiteBuilder] Launching builder for ${email}`);
-  res.json({ message: `Site built for ${email}` });
-});
-
+// 🔄 Reauth (mock)
 app.post("/reauth", (req, res) => {
   const { email } = req.body;
   console.log(`[Reauth] Reauth requested for ${email}`);
   res.json({ message: `Reauthorized ${email}` });
 });
 
-// ✅ Launch OAuth Flow
+// ⚡ GPT Placeholder
+app.post("/run-gpt", (req, res) => {
+  const { email } = req.body;
+  console.log(`[GPT] Generating content for ${email}`);
+  res.json({ message: `Content generated for ${email}` });
+});
+
+// 🏗️ Site Builder Placeholder
+app.post("/build-site", (req, res) => {
+  const { email } = req.body;
+  console.log(`[SiteBuilder] Launching builder for ${email}`);
+  res.json({ message: `Site built for ${email}` });
+});
+
+// 🔑 Launch OAuth
 app.get("/auth/start", (req, res) => {
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: "offline",
+    prompt: "select_account",
     scope: [
       "https://www.googleapis.com/auth/userinfo.profile",
       "https://www.googleapis.com/auth/userinfo.email",
@@ -96,7 +76,7 @@ app.get("/auth/start", (req, res) => {
   res.redirect(authUrl);
 });
 
-// ✅ OAuth Callback
+// 🔁 OAuth Callback Handler
 app.get("/auth/callback", async (req, res) => {
   const code = req.query.code;
   try {
