@@ -59,11 +59,16 @@ export default function Dashboard() {
       <div className="col-span-1 space-y-4">
         <h2 className="text-xl font-bold">Google Accounts</h2>
         {accounts.map((acc) => (
-          <Card key={acc.email} onClick={() => selectAccount(acc)} className="hover:bg-muted cursor-pointer border border-red-500" style={{ zIndex: 1000, position: "relative" }}>
+          <Card key={acc.email} className="hover:bg-muted border border-red-500" style={{ zIndex: 1000, position: "relative" }}>
             <CardContent className="p-2">
-              <p className="font-semibold">{acc.name}</p>
-              <p className="text-sm text-muted-foreground">{acc.email}</p>
-              <p className="text-xs italic">{acc.niche}</p>
+              <div
+                className="cursor-pointer"
+                onClick={() => selectAccount(acc)}
+              >
+                <p className="font-semibold">{acc.name}</p>
+                <p className="text-sm text-muted-foreground">{acc.email}</p>
+                <p className="text-xs italic">{acc.niche}</p>
+              </div>
             </CardContent>
           </Card>
         ))}

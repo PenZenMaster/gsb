@@ -27,3 +27,5 @@ temp/
 # OS files
 .DS_Store
 Thumbs.db
+#zip files
+*.zip
