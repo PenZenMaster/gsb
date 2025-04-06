@@ -101,10 +101,7 @@ export default function Dashboard() {
           <Button disabled={!selectedAccount} onClick={runGPT}>🧠 Run GPT</Button>
           <Button disabled={!selectedAccount} onClick={buildSite}>🌍 Build Site</Button>
           <Button disabled={!selectedAccount} onClick={reauth}>🔄 Reauth</Button>
-
-
         </div>
-
         <div>
           <Textarea className="w-full h-80 font-mono text-sm" readOnly value={log} />
         </div>

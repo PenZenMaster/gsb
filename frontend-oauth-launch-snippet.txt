@@ -1,0 +1,5 @@
+// --- In Dashboard.jsx ---
+
+const launchOAuth = () => {
+  window.open("http://localhost:3001/auth/start", "_blank", "popup,width=500,height=600");
+};

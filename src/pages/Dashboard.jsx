@@ -17,8 +17,7 @@ export default function Dashboard() {
   }, []);
 
   const selectAccount = (account) => {
-    alert("CLICKED: " + account.name);
-    console.log("CLICKED:", account);
+    console.log("🔥 Account clicked:", account);
     setSelectedAccount(account);
     setLog((log) => log + `Selected account: ${account.name} (${account.email})\n`);
   };
@@ -34,6 +33,7 @@ export default function Dashboard() {
       const result = await res.json();
       setLog((log) => log + `✅ GPT complete: ${result.message}\n`);
     } catch (err) {
+      console.error("🔥 GPT error:", err);
       setLog((log) => log + `❌ GPT failed: ${err.message}\n`);
     }
   };
@@ -49,13 +49,33 @@ export default function Dashboard() {
       const result = await res.json();
       setLog((log) => log + `✅ Site build complete: ${result.message}\n`);
     } catch (err) {
+      console.error("🔥 Site build error:", err);
       setLog((log) => log + `❌ Site builder failed: ${err.message}\n`);
+    }
+  };
+
+  const reauth = async () => {
+    console.log("🔥 Reauth clicked for", selectedAccount?.email);
+    setLog((log) => log + `🔄 Starting reauth for ${selectedAccount?.email}...\n`);
+    try {
+      const res = await fetch("http://localhost:3001/reauth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: selectedAccount.email })
+      });
+
+      console.log("📡 Reauth response status:", res.status);
+      const result = await res.json();
+      console.log("📦 Reauth response JSON:", result);
+      setLog((log) => log + `✅ Reauth complete: ${result.message}\n`);
+    } catch (err) {
+      console.error("🔥 Reauth error:", err);
+      setLog((log) => log + `❌ Reauth failed: ${err.message}\n`);
     }
   };
 
   return (
     <div className="p-4 grid grid-cols-4 gap-4 min-h-screen">
-      {/* Sidebar: Account List */}
       <div className="col-span-1 space-y-4">
         <h2 className="text-xl font-bold">Google Accounts</h2>
         {accounts.map((acc) => (
@@ -74,16 +94,13 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Main Panel */}
       <div className="col-span-3 space-y-4">
         <h1 className="text-2xl font-bold">RankRocket Control Panel</h1>
-
         <div className="flex gap-2">
           <Button disabled={!selectedAccount} onClick={runGPT}>🧠 Run GPT</Button>
           <Button disabled={!selectedAccount} onClick={buildSite}>🌍 Build Site</Button>
-          <Button disabled={!selectedAccount}>🔄 Reauth</Button>
+          <Button disabled={!selectedAccount} onClick={reauth}>🔄 Reauth</Button>
         </div>
-
         <div>
           <Textarea className="w-full h-80 font-mono text-sm" readOnly value={log} />
         </div>
