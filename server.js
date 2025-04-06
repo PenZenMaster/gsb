@@ -14,7 +14,14 @@ const CLIENT_ID = "37156535763-79hajfra02dtocpef812lhg3fgakgfqi.apps.googleuserc
 const CLIENT_SECRET = "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";
 const REDIRECT_URI = "http://localhost:3001/auth/callback";
 
-const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+const authUrl = oauth2Client.generateAuthUrl({
+  access_type: "offline",
+  prompt: "select_account",
+  scope: [
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email",
+  ],
+});
 
 // In-memory user store for demo
 const accounts = [
