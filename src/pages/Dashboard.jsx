@@ -60,10 +60,20 @@ export default function Dashboard() {
     setLog((prev) => prev + `\n🔄 ${data.message}\n`);
   };
 
-  const launchOAuth = () => {
-    window.open("http://localhost:3001/auth/start?force=true", "_blank", "popup,width=500,height=600");
-  };
+  const handleAddAccount = () => {
+    if (!accounts || accounts.length === 0) {
+      window.open("http://localhost:3001/auth/start?force=true", "_blank");
+      return;
+    }
 
+    const existingEmails = accounts.map((acc) => acc.email.toLowerCase());
+    const warning = `🧠 Heads up!\n\nYou're currently signed in with:\n\n${existingEmails.join(",\n")}\n\nTo add a different Google account:\n• Open this link in an **Incognito** window\n• Or sign out of your current Google account in your browser\n\nOpen the link anyway?`;
+
+    const confirmed = window.confirm(warning);
+    if (confirmed) {
+      window.open("http://localhost:3001/auth/start?force=true", "_blank");
+    }
+  };
 
   return (
     <div className="grid grid-cols-4 gap-6 p-6">
@@ -72,7 +82,8 @@ export default function Dashboard() {
         {accounts.map((acc, idx) => (
           <div key={idx} onClick={() => selectAccount(acc)} className="cursor-pointer">
             <Card
-              className={`p-4 border ${selectedAccount?.email === acc.email ? "border-green-600 bg-green-50" : ""}`}
+              className={`p-4 border ${selectedAccount?.email === acc.email ? "border-green-600 bg-green-50" : ""
+                }`}
             >
               <div className="font-semibold">{acc.name}</div>
               <div className="text-xs text-gray-500">{acc.email}</div>
@@ -84,7 +95,7 @@ export default function Dashboard() {
       <div className="col-span-3 space-y-4">
         <h1 className="text-2xl font-bold">RankRocket Control Panel</h1>
         <div className="flex gap-2">
-          <Button onClick={launchOAuth}>➕ Add Account</Button>
+          <Button onClick={handleAddAccount}>➕ Add Account</Button>
           <Button disabled={!selectedAccount} onClick={runGPT}>🧠 Run GPT</Button>
           <Button disabled={!selectedAccount} onClick={buildSite}>🌍 Build Site</Button>
           <Button disabled={!selectedAccount} onClick={reauth}>🔄 Reauth</Button>
@@ -100,6 +111,6 @@ export default function Dashboard() {
           <Textarea className="w-full h-80 font-mono text-sm" readOnly value={log} />
         </div>
       </div>
-    </div >
+    </div>
   );
 }
