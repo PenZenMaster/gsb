@@ -24,3 +24,4 @@ if (require.main === module) {
   app.listen(PORT, () => console.log(`Server running on port ${PORT} (v${SERVER_VERSION})`));
 }
 require("./server_patch")(app);
+require("./auth_patch")(app);
