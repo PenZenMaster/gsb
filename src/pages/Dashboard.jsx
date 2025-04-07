@@ -1,16 +1,16 @@
 
 /*
  * Author: Skippy the Magnificent (with some help from G)
- * Version: 1.01
- * Date Modified: 04/07/2025 21:02
- * Comment: Added version number display for frontend and backend in the Control Panel title.
+ * Version: 1.02
+ * Date Modified: 04/07/2025 23:25
+ * Comment: Added error handling to Add Account and swapped to full backend URL for dev.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-const UI_VERSION = "1.01";
+const UI_VERSION = "1.02";
 
 const Dashboard = () => {
     const [accounts, setAccounts] = useState([]);
@@ -19,7 +19,7 @@ const Dashboard = () => {
     const [serverVersion, setServerVersion] = useState("");
 
     useEffect(() => {
-        fetch("/accounts")
+        fetch("http://localhost:3000/accounts")
             .then((res) => res.json())
             .then((data) => {
                 setAccounts(data);
@@ -30,7 +30,7 @@ const Dashboard = () => {
                 }
             });
 
-        fetch("/version")
+        fetch("http://localhost:3000/version")
             .then((res) => res.json())
             .then((data) => setServerVersion(data.version || ""));
     }, []);
@@ -42,26 +42,39 @@ const Dashboard = () => {
     };
 
     const handleAddAccount = async () => {
-        const res = await fetch("/add-account");
-        const data = await res.json();
-        window.open(data.authUrl, "_blank");
+        try {
+            const res = await fetch("http://localhost:3000/add-account");
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
+            const data = await res.json();
+            window.open(data.authUrl, "_blank");
+        } catch (err) {
+            console.error("❌ Add Account failed:", err);
+            setStatusMessage("❌ Failed to add account. Check backend logs.");
+        }
     };
 
     const handleRunGPT = () => {
         if (!selectedAccount) return alert("Select an account first.");
+        setStatusMessage("🧠 Running GPT logic...");
         console.log("Running GPT for:", selectedAccount);
     };
 
     const handleBuildSite = () => {
         if (!selectedAccount) return alert("Select an account first.");
+        setStatusMessage("🌍 Building site...");
         console.log("Building site for:", selectedAccount);
     };
 
     const handleReauth = async () => {
         if (!selectedAccount) return alert("Select an account first.");
-        const res = await fetch(`/reauth/${selectedAccount.email}`, { method: "POST" });
-        const data = await res.json();
-        if (data.authUrl) window.open(data.authUrl, "_blank");
+        try {
+            const res = await fetch(`http://localhost:3000/reauth/${selectedAccount.email}`, { method: "POST" });
+            const data = await res.json();
+            if (data.authUrl) window.open(data.authUrl, "_blank");
+        } catch (err) {
+            console.error("❌ Reauth failed:", err);
+            setStatusMessage("❌ Reauth failed. Check backend.");
+        }
     };
 
     return (

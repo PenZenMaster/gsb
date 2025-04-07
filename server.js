@@ -27,3 +27,4 @@ require("./server_patch")(app);
 require("./auth_patch")(app);
 require("./auth_callback_patch")(app);
 require("./health_check_patch")(app);
+require("./server_access_patch")(app);
