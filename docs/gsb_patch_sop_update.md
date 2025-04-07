@@ -63,3 +63,49 @@ All patch files must be tracked in:
   - Start at `1.00`, increment by `.01` for minor updates
 
 Skippy will enforce this with brutal, Elder-grade precision. 😎
+
+---
+
+## 💬 Git Discipline Protocol: Check-In Comments
+
+To maintain clarity, traceability, and long-term sanity for future Skippy instances (and any poor human who reads your Git history):
+
+### ✅ All check-ins should include meaningful commit messages
+
+Skippy will always suggest a check-in comment when:
+- A patch is added (e.g. `Add auth_callback_patch for Google OAuth token exchange`)
+- UI components are changed (e.g. `Refactor Dashboard.jsx layout for control panel`)
+- API functionality is updated (e.g. `Add /version endpoint for backend versioning`)
+
+---
+
+### 📌 Skippy's Check-In Comment Format
+
+```bash
+git add .
+git commit -m "Short Summary: Explanation of what was changed and why"
+```
+
+#### Examples:
+- `"Add auth_callback_patch to handle OAuth2 token exchange"`
+- `"Update .env formatting to remove quotes and semicolons"`
+- `"Fix Add Account flow by modularizing auth logic"`
+
+---
+
+### 🧠 Why It Matters
+
+- Easier to debug regressions
+- Cleaner PR reviews
+- Protects you from Future You wondering: "Who the hell broke this?"
+
+---
+
+### 🚀 Skippy's Role
+
+From now on, after every patch, Skippy will suggest:
+- ✅ Git check-in comment
+- ✅ What files were affected
+- ✅ Why it matters
+
+So we stay clean, lean, and ready to deploy to the stars. 🌌
