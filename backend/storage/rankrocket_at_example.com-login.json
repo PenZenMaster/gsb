@@ -1,0 +1,8 @@
+{
+  "name": "RankRocket",
+  "email": "rankrocket@example.com",
+  "tokens": {
+    "access_token": "ya29.test1234"
+  },
+  "client_id": "dummy-client-id"
+}
