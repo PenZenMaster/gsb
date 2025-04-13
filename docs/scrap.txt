@@ -1,0 +1,23 @@
+Backend
+E:
+cd E:\projects\gsb
+node server.js
+
+Front End
+E:
+cd E:\projects\gsb
+npm run dev
+
+Client ID
+37156535763-79hajfra02dtocpef812lhg3fgakgfqi.apps.googleusercontent.com
+Creation date
+April 3, 2025 at 1:46:10 PM GMT-7
+Client secrets
+If you are in the process of changing client secrets, you can manually rotate them without downtime. Learn more 
+Client secret
+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
+
+const CLIENT_ID = "37156535763-79hajfra02dtocpef812lhg3fgakgfqi.apps.googleusercontent.com";
+const CLIENT_SECRET = "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";
+const REDIRECT_URI = "http://localhost:3001/auth/callback";
+
