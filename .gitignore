@@ -29,3 +29,6 @@ temp/
 Thumbs.db
 #zip files
 *.zip
+
+# Secret Shit
+google-auth.json
